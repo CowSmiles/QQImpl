@@ -37,7 +37,7 @@ namespace mmmojocall
 			switch (request_id)
 			{
 			case mmmojocall::RequestIdUtility::UtilityInitPullResp:
-				//Utility»Ø¸´³õÊ¼»¯×´Ì¬
+				//Utilityå›å¤åˆå§‹åŒ–çŠ¶æ€
 				break;
 			case mmmojocall::RequestIdUtility::UtilityQRScanPullResp:
 			default:
@@ -63,7 +63,7 @@ namespace mmmojocall
 			case RequestIdUtility::UtilityHiPush:
 			{
 				utility_protobuf::InitReqMessage init_req;
-				init_req.set_expire_timestamp(2840115661);//2060.01.01 01:01:01 ±¾À´ÊÇ1714082745
+				init_req.set_expire_timestamp(2840115661);//2060.01.01 01:01:01 æœ¬æ¥æ˜¯1714082745
 				init_req.set_type(1);
 				std::string data_;
 				init_req.SerializeToString(&data_);
@@ -124,7 +124,7 @@ namespace mmmojocall
 
 	bool UtilityManager::StartWeChatUtility()
 	{
-		//ÉèÖÃ»Øµ÷º¯ÊıµÄdataÎª´ËÀàÖ¸Õë
+		//è®¾ç½®å›è°ƒå‡½æ•°çš„dataä¸ºæ­¤ç±»æŒ‡é’ˆ
 		__super::SetCallbackUsrData(this);
 
 		bool bRet = __super::StartMMMojoEnv();
@@ -155,11 +155,11 @@ namespace mmmojocall
 			return false;
 		}
 
-		//ÔÚSendÖ®Ç°, ±ØĞëµÈ´ıUtility½ø³ÌÆô¶¯
+		//åœ¨Sendä¹‹å‰, å¿…é¡»ç­‰å¾…Utilityè¿›ç¨‹å¯åŠ¨
 		std::unique_lock<std::mutex> lock(m_connect_mutex);
 		m_connect_con_var.wait(lock, [this]() { return m_connect_state; });
 
-		//´´½¨QRScanReqµÄpbÊı¾İ
+		//åˆ›å»ºQRScanReqçš„pbæ•°æ®
 		utility_protobuf::QRScanReqMessage qrscan_request;
 		qrscan_request.set_origin_pic(pic_path_str);
 		qrscan_request.set_decode_pic(std::string());
@@ -189,11 +189,11 @@ namespace mmmojocall
 			return false;
 		}
 
-		//ÔÚSendÖ®Ç°, ±ØĞëµÈ´ıUtility½ø³ÌÆô¶¯
+		//åœ¨Sendä¹‹å‰, å¿…é¡»ç­‰å¾…Utilityè¿›ç¨‹å¯åŠ¨
 		std::unique_lock<std::mutex> lock(m_connect_mutex);
 		m_connect_con_var.wait(lock, [this]() { return m_connect_state; });
 		
-		//·¢ËÍPbÇëÇó
+		//å‘é€Pbè¯·æ±‚
 		utility_protobuf::ResampleImageReqMessage resamlpe_img_req;
 		resamlpe_img_req.set_decode_pic(origin_encode_path);
 		resamlpe_img_req.set_encode_pic(decode_pic_path);

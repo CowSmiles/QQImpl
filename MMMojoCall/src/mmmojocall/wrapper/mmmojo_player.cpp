@@ -44,20 +44,20 @@ namespace mmmojocall
 			{
 				//std::cout << "ReadOnPull PlayerInitPullResp ";
 
-				//Player»Ø¸´³õÊ¼»¯×´Ì¬
+				//Playerå›å¤åˆå§‹åŒ–çŠ¶æ€
 				player_protobuf::InitRespMessage init_resp;
 				init_resp.ParseFromArray(pb_data, pb_size);
 				int status = init_resp.status();
 				//std::cout << status << std::endl;
 				if (status != 1)
 				{
-					//Î´³õÊ¼»¯³É¹¦
+					//æœªåˆå§‹åŒ–æˆåŠŸ
 				}
 			}
 				break;
 			case mmmojocall::RequestIdPlayer::PlayerCreatePlayerCorePullResp:
 			{
-				//WeChatPlayer»Ø¸´´´½¨CoreµÄÇëÇó
+				//WeChatPlayerå›å¤åˆ›å»ºCoreçš„è¯·æ±‚
 				//std::cout << "ReadOnPull PlayerCreatePlayerCorePullResp ";
 
 				player_protobuf::CreatePlayerCoreRespMessage cpc_resp;
@@ -66,7 +66,7 @@ namespace mmmojocall
 
 				PlayerManager::CoreStatus* pCore = pThis->GetPlayerCoreStatus(cpc_resp.player_id());
 				pCore->create_success = cpc_resp.is_suceess();
-				pThis->RunEvent(cpc_resp.player_id(), 1);//ÈÃÇëÇó´´½¨CoreµÄº¯Êı¼ÌĞøÔËĞĞ
+				pThis->RunEvent(cpc_resp.player_id(), 1);//è®©è¯·æ±‚åˆ›å»ºCoreçš„å‡½æ•°ç»§ç»­è¿è¡Œ
 			}
 				break;
 			case mmmojocall::RequestIdPlayer::PlayerGetCurrentPositionMsPullResp:
@@ -160,7 +160,7 @@ namespace mmmojocall
 				//std::cout << "ID: " << async_msg.player_id() << " | Time: " << async_msg.duration() << std::endl;
 				PlayerManager::CoreStatus* pCore = pThis->GetPlayerCoreStatus(async_msg.player_id());
 				pCore->duration = async_msg.duration();
-				pThis->RunEvent(async_msg.player_id(), 2);//ÈÃÇëÇóInitCoreµÄº¯Êı¼ÌĞøÔËĞĞ
+				pThis->RunEvent(async_msg.player_id(), 2);//è®©è¯·æ±‚InitCoreçš„å‡½æ•°ç»§ç»­è¿è¡Œ
 
 			}
 				break;
@@ -199,7 +199,7 @@ namespace mmmojocall
 		__super::SetOneCallback(MMMojoEnvironmentCallbackType::kMMReadPull, PlayerReadOnPull);
 		__super::SetOneCallback(MMMojoEnvironmentCallbackType::kMMReadPush, PlayerReadOnPush);
 
-		//³õÊ¼»¯PlayerCore ID
+		//åˆå§‹åŒ–PlayerCore ID
 		for (size_t i = 0; i < MAX_PLAYER_CORE_ID; i++) SetPlayerCoreIdIdle(i + 1);
 	}
 
@@ -223,7 +223,7 @@ namespace mmmojocall
 
 	bool PlayerManager::StartWeChatPlayer()
 	{
-		//ÉèÖÃ»Øµ÷º¯ÊıµÄdataÎª´ËÀàÖ¸Õë
+		//è®¾ç½®å›è°ƒå‡½æ•°çš„dataä¸ºæ­¤ç±»æŒ‡é’ˆ
 		__super::SetCallbackUsrData(this);
 
 		bool bRet = __super::StartMMMojoEnv();
@@ -255,7 +255,7 @@ namespace mmmojocall
 			return 0;
 		}
 
-		//»ñÈ¡Ò»¸öPlayerCore ID
+		//è·å–ä¸€ä¸ªPlayerCore ID
 		int player_id = GetIdlePlayerCoreId();
 		if (player_id == 0)
 		{
@@ -263,10 +263,10 @@ namespace mmmojocall
 			return 0;
 		}
 
-		//´´½¨Ò»¸ö²¥·ÅÄÚºËĞÅÏ¢
+		//åˆ›å»ºä¸€ä¸ªæ’­æ”¾å†…æ ¸ä¿¡æ¯
 		CreateCoreStatusSync(player_id);
 
-		//·¢ËÍCreatePlayerCoreÇëÇó
+		//å‘é€CreatePlayerCoreè¯·æ±‚
 		player_protobuf::CreatePlayerCoreReqMessage create_playercore_req;
 		create_playercore_req.set_player_id(player_id);
 		create_playercore_req.set_is_post_frame(1);
@@ -274,7 +274,7 @@ namespace mmmojocall
 		create_playercore_req.SerializeToString(&data_);
 		SendPbSerializedData((void*)(data_.data()), data_.size(), MMMojoInfoMethod::kMMPullReq, false, RequestIdPlayer::PlayerCreatePlayerCorePullReq);
 
-		this->WaitEvent(player_id, 1);//µÈ´ı»Øµ÷Íê³É
+		this->WaitEvent(player_id, 1);//ç­‰å¾…å›è°ƒå®Œæˆ
 		if (m_core_status[player_id].create_success)
 		{
 			return player_id;
@@ -302,7 +302,7 @@ namespace mmmojocall
 			return 0;
 		}
 
-		//À´×ÔÍøÂç µ«Ã»ÓĞsize
+		//æ¥è‡ªç½‘ç»œ ä½†æ²¡æœ‰size
 		if (!is_local && (file_size == 0))
 		{
 			__super::SetLastErrStr(utils::string_format("%s: Arg file_size can't be ZERO", __FUNCTION__));
@@ -330,7 +330,7 @@ namespace mmmojocall
 		init_playercore_msg.SerializeToString(&data_);
 		SendPbSerializedData((void*)(data_.data()), data_.size(), MMMojoInfoMethod::kMMPush, false, RequestIdPlayer::PlayerInitPlayerCorePush);
 
-		//µÈ´ı»Øµ÷Íê³É
+		//ç­‰å¾…å›è°ƒå®Œæˆ
 		this->WaitEvent(player_id, 2);
 		return m_core_status[player_id].duration;
 	}
@@ -349,7 +349,7 @@ namespace mmmojocall
 			SendPbSerializedData((void*)(data_.data()), data_.size(), MMMojoInfoMethod::kMMPush, false, RequestIdPlayer::PlayerResizePush);
 			return true;
 		}
-		//²»´æÔÚ¸Ãplayer_id
+		//ä¸å­˜åœ¨è¯¥player_id
 		return false;
 	}
 
@@ -516,7 +516,7 @@ namespace mmmojocall
 	{
 		char data_[2] = {0x00, 0x00};
 		SendPbSerializedData((void*)(data_), sizeof(data_), MMMojoInfoMethod::kMMPullReq, false, RequestIdPlayer::PlayerGetCurrentPositionMsPullReq);
-		this->WaitEvent(player_id, 3);//µÈ´ı»Øµ÷Íê³É
+		this->WaitEvent(player_id, 3);//ç­‰å¾…å›è°ƒå®Œæˆ
 		return m_core_status[player_id].cur_pos;
 	}
 
@@ -531,7 +531,7 @@ namespace mmmojocall
 			id_msg.SerializeToString(&data_);
 			SendPbSerializedData((void*)(data_.data()), data_.size(), MMMojoInfoMethod::kMMPush, false, RequestIdPlayer::PlayerDestroyPlayerCorePush);
 			
-			//Çå³ım_core_statusºÍIDÕ¼ÓÃ
+			//æ¸…é™¤m_core_statuså’ŒIDå ç”¨
 			DeleteCoreStatusSync(player_id);
 			SetPlayerCoreIdIdle(player_id);
 		}
@@ -609,7 +609,7 @@ namespace mmmojocall
 			}
 		}
 		m_player_core_mutex.unlock();
-		return 0;//·µ»Ø0ËµÃ÷Ã»ÓĞ¿ÕÏĞµÄ
+		return 0;//è¿”å›0è¯´æ˜æ²¡æœ‰ç©ºé—²çš„
 	}
 
 	bool PlayerManager::SetPlayerCoreIdIdle(int id)

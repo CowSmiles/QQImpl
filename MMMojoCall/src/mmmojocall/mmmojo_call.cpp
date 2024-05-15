@@ -7,10 +7,10 @@ namespace qqimpl
 {
 namespace mmmojocall
 {
-	//ÊÇ·ñÈ«¾Ö³õÊ¼»¯ÁËMMMojo
+	//æ˜¯å¦å…¨å±€åˆå§‹åŒ–äº†MMMojo
 	bool g_is_init_mmmojo = false;
 
-	//Ä¬ÈÏ»Øµ÷º¯Êı
+	//é»˜è®¤å›è°ƒå‡½æ•°
 	static void DefaultReadOnPush(uint32_t request_id, const void* request_info, void* user_data);
 	static void DefaultReadOnPull(uint32_t request_id, const void* request_info, void* user_data);
 	static void DefaultReadOnShared(uint32_t request_id, const void* request_info, void* user_data);
@@ -152,12 +152,12 @@ namespace mmmojocall
 			g_MMMojoDLL.lpRemoveMMMojoReadInfo((void*)request_info);
 	}
 
-	//ÒÔÏÂÎªXPluginManagerÀàµÄÊµÏÖ
+	//ä»¥ä¸‹ä¸ºXPluginManagerç±»çš„å®ç°
 	XPluginManager::XPluginManager()
 	{
 		m_last_err = "ERR_OK";
 		m_mmmojo_env_ptr = nullptr;
-		m_cb_usrdata = this;	//Ä¬ÈÏÉèÎªthis
+		m_cb_usrdata = this;	//é»˜è®¤è®¾ä¸ºthis
 		m_callbacks.read_on_pull = DefaultReadOnPull;
 		m_callbacks.read_on_push = DefaultReadOnPush;
 		m_callbacks.read_on_shared = DefaultReadOnShared;
@@ -247,14 +247,14 @@ namespace mmmojocall
 
 	bool XPluginManager::StartMMMojoEnv()
 	{
-		//Î´³õÊ¼»¯DLLµ¼³öº¯Êı
+		//æœªåˆå§‹åŒ–DLLå¯¼å‡ºå‡½æ•°
 		if (g_MMMojoDLL.hMMMojo == NULL)
 		{
 			m_last_err = utils::string_format("%s: Please Load mmmojo(_64).dll firstly", __FUNCTION__);
 			return false;
 		}
 
-		//Î´³õÊ¼»¯mmmojo
+		//æœªåˆå§‹åŒ–mmmojo
 		if (g_is_init_mmmojo == false)
 		{
 			m_last_err = utils::string_format("%s: Please call InitMMMojoGlobal first before any action", __FUNCTION__);
@@ -269,10 +269,10 @@ namespace mmmojocall
 
 		if (m_mmmojo_env_ptr == nullptr)
 		{
-			//´´½¨MMMojo»·¾³
+			//åˆ›å»ºMMMojoç¯å¢ƒ
 			m_mmmojo_env_ptr = g_MMMojoDLL.lpCreateMMMojoEnvironment();
 
-			//ÉèÖÃ»Øµ÷º¯Êı
+			//è®¾ç½®å›è°ƒå‡½æ•°
 			g_MMMojoDLL.lpSetMMMojoEnvironmentCallbacks(m_mmmojo_env_ptr, MMMojoEnvironmentCallbackType::kMMUserData, m_cb_usrdata);
 			for (size_t i = MMMojoEnvironmentCallbackType::kMMReadPush; i <= MMMojoEnvironmentCallbackType::kMMRemoteMojoError; i++)
 			{
@@ -280,11 +280,11 @@ namespace mmmojocall
 				g_MMMojoDLL.lpSetMMMojoEnvironmentCallbacks(m_mmmojo_env_ptr, i, cb);
 			}
 
-			//ÉèÖÃÆô¶¯ËùĞè²ÎÊı
+			//è®¾ç½®å¯åŠ¨æ‰€éœ€å‚æ•°
 			g_MMMojoDLL.lpSetMMMojoEnvironmentInitParams(m_mmmojo_env_ptr, MMMojoEnvironmentInitParamType::kMMHostProcess, TRUE);
 			g_MMMojoDLL.lpSetMMMojoEnvironmentInitParams(m_mmmojo_env_ptr, MMMojoEnvironmentInitParamType::kMMExePath, m_exe_path.c_str());
 
-			//ÉèÖÃSwitchNativeÃüÁîĞĞ²ÎÊı
+			//è®¾ç½®SwitchNativeå‘½ä»¤è¡Œå‚æ•°
 			for (auto& switch_ : m_switch_native)
 			{
 				std::string switch_arg = switch_.first;
@@ -294,7 +294,7 @@ namespace mmmojocall
 			}
 				
 
-			//Æô¶¯³ÌĞò
+			//å¯åŠ¨ç¨‹åº
 			g_MMMojoDLL.lpStartMMMojoEnvironment(m_mmmojo_env_ptr);
 			m_start_mmmojo_env = true;
 		}
@@ -324,7 +324,7 @@ namespace mmmojocall
 		if (data_size != 0)
 		{
 			void* request = g_MMMojoDLL.lpGetMMMojoWriteInfoRequest(write_info, data_size);
-			memmove(request, pb_data, data_size);//Ğ´ÈëprotobufÊı¾İ
+			memmove(request, pb_data, data_size);//å†™å…¥protobufæ•°æ®
 		}
 		g_MMMojoDLL.lpSendMMMojoWriteInfo(m_mmmojo_env_ptr, write_info);
 	}
@@ -345,7 +345,7 @@ namespace mmmojocall
 		OutputDebugStringA(__FUNCTION__);
 #endif // _DEBUG
 
-		//Ê¾Àı
+		//ç¤ºä¾‹
 		/*
 		uint32_t pb_size = 0;
 		const void* pb_data = GetPbSerializedData(request_info, pb_size);

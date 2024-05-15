@@ -112,11 +112,20 @@ int main()
 
 	//向其发送OCR请求
 	std::cout << "[=] Press any key to send ocr request...\n"; getchar();
+    std::cout << "[=] test \n";
 	if (!ocr_manager.DoOCRTask(".\\test.png"))
 	{
 		std::cout << "\033[31m[!] " << ocr_manager.GetLastErrStr() << "\033[0m\n";
 		return 1;
 	}
+
+    std::cout << "[=] test 1\n";
+    //再次发送OCR请求
+    if (!ocr_manager.DoOCRTask(".\\PMP陌生词汇简介_20.png"))
+    {
+        std::cout << "\033[31m[!] " << ocr_manager.GetLastErrStr() << "\033[0m\n";
+        return 1;
+    }
 
 	//结束WeChatOCR.exe
 	std::cout << "[=] Press any key to stop WeChatOCR Env...\n"; getchar();

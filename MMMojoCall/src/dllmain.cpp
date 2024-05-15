@@ -1,4 +1,4 @@
-﻿#ifdef USE_WRAPPER
+#ifdef USE_WRAPPER
 #include "google/protobuf/stubs/common.h"
 #endif
 

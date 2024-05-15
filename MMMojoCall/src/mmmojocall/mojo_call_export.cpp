@@ -192,7 +192,7 @@ int CallFuncXPluginMgr(const void* class_ptr, int mgr_type, const char* func_nam
 	}
 	else if (mgr_type == MGRTYPE::PlayerManager)
 	{
-		//TODO: ¿´¿´ÓĞÃ»ÓĞ°ì·¨¿ÉÒÔ·´Éäµ÷ÓÃ, ÕâÑùĞ´Ì«Âé·³ÁË
+		//TODO: çœ‹çœ‹æœ‰æ²¡æœ‰åŠæ³•å¯ä»¥åå°„è°ƒç”¨, è¿™æ ·å†™å¤ªéº»çƒ¦äº†
 	}
 #endif
 
