@@ -1,6 +1,7 @@
 #include "mmmojo_ocr.h"
 #include "utils.h"
 
+#include <codecvt>
 #include <google/protobuf/util/json_util.h>
 
 namespace qqimpl
@@ -47,14 +48,14 @@ namespace mmmojocall
 		m_cb_data_use_json = false;
 		m_usr_callback = nullptr;
 
-		//ÅĞ¶ÏÊÇ·ñÎª64Î»ÏµÍ³
+		//åˆ¤æ–­æ˜¯å¦ä¸º64ä½ç³»ç»Ÿ
 		SYSTEM_INFO si; GetNativeSystemInfo(&si);
 		if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64 || si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
 			m_is_arch64 = true;
 		else
 			m_is_arch64 = false;
 
-		//³õÊ¼»¯ÈÎÎñID
+		//åˆå§‹åŒ–ä»»åŠ¡ID
 		for (size_t i = 0; i < OCR_MAX_TASK_ID; i++) SetTaskIdIdle(i + 1);
 
 		__super::SetOneCallback(MMMojoEnvironmentCallbackType::kMMRemoteConnect, OCRRemoteOnConnect);
@@ -92,7 +93,7 @@ namespace mmmojocall
 			return false;
 		}
 
-		//ÉèÖÃ»Øµ÷º¯ÊıµÄdataÎª´ËÀàÖ¸Õë
+		//è®¾ç½®å›è°ƒå‡½æ•°çš„dataä¸ºæ­¤ç±»æŒ‡é’ˆ
 		__super::SetCallbackUsrData(this);
 
 		bool bRet = __super::StartMMMojoEnv();
@@ -118,7 +119,16 @@ namespace mmmojocall
 			return false;
 		}
 
-		std::string pic_path_str = pic_path;
+		std::wstring pic_path_str;
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        try {
+            pic_path_str = converter.from_bytes(pic_path);
+        }
+        catch (const std::range_error& e) {
+            std::cerr << "Exception occurred: " << e.what() << '\n';
+            pic_path_str =  std::wstring();  // Return an empty wstring on conversion error
+        }
+
 		if (pic_path_str.empty() || utils::CheckPathInfo(pic_path_str) != 2)
 		{
 			__super::SetLastErrStr(utils::string_format("%s: Arg is Invaild", __FUNCTION__));
@@ -132,7 +142,7 @@ namespace mmmojocall
 			return false;
 		}
 
-		//ÔÚSendÖ®Ç°, ±ØĞëµÈ´ıOCR½ø³ÌÆô¶¯
+		//åœ¨Sendä¹‹å‰, å¿…é¡»ç­‰å¾…OCRè¿›ç¨‹å¯åŠ¨
 		std::unique_lock<std::mutex> lock(m_connect_mutex);
 		m_connect_con_var.wait(lock, [this]() { return m_connect_state; });
 
@@ -171,7 +181,7 @@ namespace mmmojocall
 		uint32_t task_id = ocr_response.task_id();
 		uint32_t type = ocr_response.type();
 
-		if (type == 0)//Èç¹ûStartºóÁ¢Âí·¢ËÍOCRÈÎÎñÇëÇó ÔòÆô¶¯PUSH»Øµ÷Ê±¾Í¼ÇÂ¼ÁËIDºÍPICµÄĞÅÏ¢ »á±»Æô¶¯»Øµ÷Ä¨µô ËùÒÔĞèÒªÅĞ¶ÏÒ»ÏÂ
+		if (type == 0)//å¦‚æœStartåç«‹é©¬å‘é€OCRä»»åŠ¡è¯·æ±‚ åˆ™å¯åŠ¨PUSHå›è°ƒæ—¶å°±è®°å½•äº†IDå’ŒPICçš„ä¿¡æ¯ ä¼šè¢«å¯åŠ¨å›è°ƒæŠ¹æ‰ æ‰€ä»¥éœ€è¦åˆ¤æ–­ä¸€ä¸‹
 		{
 			if (task_id >= 1 && task_id <= OCR_MAX_TASK_ID)
 			{
@@ -201,7 +211,7 @@ namespace mmmojocall
 					}
 				}
 
-				//É¾³ıidÓëpic_pathµÄmap
+				//åˆ é™¤idä¸pic_pathçš„map
 				SetTaskIdIdle(task_id);
 				m_id_path.erase(task_id);
 			}
@@ -210,9 +220,9 @@ namespace mmmojocall
 
 	bool OCRManager::SendOCRTask(uint32_t task_id, std::string pic_path)
 	{
-		m_id_path[task_id] = pic_path;//¼ÇÂ¼IDºÍÍ¼Æ¬Â·¾¶µÄ¹ØÏµ
+		m_id_path[task_id] = pic_path;//è®°å½•IDå’Œå›¾ç‰‡è·¯å¾„çš„å…³ç³»
 
-		//´´½¨OcrRequestµÄpbÊı¾İ
+		//åˆ›å»ºOcrRequestçš„pbæ•°æ®
 		ocr_protobuf::OcrRequest ocr_request;
 		ocr_request.set_unknow(0);
 		ocr_request.set_task_id(task_id);
@@ -240,7 +250,7 @@ namespace mmmojocall
 			}
 		}
 		m_task_mutex.unlock();
-		return 0;//·µ»Ø0ËµÃ÷Ã»ÓĞ¿ÕÏĞµÄ
+		return 0;//è¿”å›0è¯´æ˜æ²¡æœ‰ç©ºé—²çš„
 	}
 
 	bool OCRManager::SetTaskIdIdle(int id)
